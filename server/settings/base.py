@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -23,10 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-ngk85$+s54n6x@6@#g-41j*qa=7lx*kkt$qa3jl@6$6oiadkig"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['3.139.244.138','pi-monitor.boost-pop.com',]
-CSRF_TRUSTED_ORIGINS = ['https://pi-monitor.boost-pop.com',]
 
 # Application definition
 
@@ -39,9 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
     "rest_framework",
-    
 ]
 
 MIDDLEWARE = [
@@ -55,7 +49,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "server.urls"
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000000
+DEFAULT_PAGE_SIZE = 10
+LANGUAGE_CODE = 'he'
+TIME_ZONE = 'Asia/Jerusalem'
+USE_I18N = True
+USE_TZ = True
+USE_L10N = True
+ROOT_URLCONF = "server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -72,11 +73,6 @@ TEMPLATES = [
     },
 ]
 
-CHANNEL_LAYERS = {
-     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
 
 WSGI_APPLICATION = "server.wsgi.application"
 ASGI_APPLICATION = "server.asgi.application"
@@ -84,12 +80,7 @@ ASGI_APPLICATION = "server.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+
 
 
 # Password validation
@@ -103,18 +94,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
