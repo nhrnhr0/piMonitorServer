@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-ngk85$+s54n6x@6@#g-41j*qa=7lx*kkt$qa3jl@6$6oiadkig
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.139.244.138',]
+ALLOWED_HOSTS = ['3.139.244.138','pi-monitor.boost-pop.com',]
 
 
 # Application definition
