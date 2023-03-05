@@ -3,7 +3,7 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = ['3.139.244.138','pi-monitor.boost-pop.com',]
-CSRF_TRUSTED_ORIGINS = ['https://pi-mmonitor.boost-pop.com',]
+CSRF_TRUSTED_ORIGINS = ['https://pi-monitor.boost-pop.com',]
 
 
 DATABASES = {
