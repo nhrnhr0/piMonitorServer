@@ -2,11 +2,20 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import PiDevice
+from .models import PiDevice,SocketDeviceIds
 from django.contrib import messages
 import json
 # messages.add_message(request, messages.INFO, 'Hello world.')
-
+class SocketDeviceIdsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'device_id','is_approved','connections_count','date_added',)
+    list_filter = ('device_id','is_approved','connections_count','date_added',)
+    actions = ['approve_device']
+    def approve_device(self, request, queryset):
+        for device in queryset:
+            device.is_approved = True
+            device.save()
+            messages.add_message(request, messages.INFO, 'Approved %s (%d)' % (device.device_id, device.id))
+admin.site.register(SocketDeviceIds,SocketDeviceIdsAdmin)
 # Register your models here.
 class PiDeviceAdmin(admin.ModelAdmin):
     list_display = ('id', 'image_tag', 'name','cec_hdmi_status','is_socket_connected_live','humanize_socket_status_updated_ago','device_id',)

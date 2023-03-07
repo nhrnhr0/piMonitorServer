@@ -16,7 +16,12 @@ from .serializers import PiDeviceSerializer
 
 
 # open_socket_connections = {}
-
+def send_set_tv_url_to_channel(channel_name,url):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(channel_name, {
+        "type": "do_set_tv_url",
+        "url": url,
+    })
 def send_reboot_to_channel(channel_name):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(channel_name, {
@@ -57,7 +62,16 @@ class ChatConsumer(WebsocketConsumer):
         self.pi_device = None
         # the chat room
         self.group_channel_name = None
-
+    def do_set_tv_url(self, event):
+        url = event.get('url')
+        print('set_tv_url')
+        self.send(text_data=json.dumps({
+            'type': 'command',
+            'command': 'set_tv_url',
+            'url': url
+        }))
+        pass
+    
     def do_reboot(self, event):
         print('rebooting')
         self.send(text_data=json.dumps({
@@ -122,8 +136,14 @@ class ChatConsumer(WebsocketConsumer):
                               {'group_channel_name': self.group_channel_name,
                                'socket_status_updated': socket_status_updated,
                                'is_socket_connected': is_socket_connected})
-
-        self.accept()
+        from .models import SocketDeviceIds
+        approved_connection, is_created = SocketDeviceIds.objects.get_or_create(device_id=self.device_id)
+        approved_connection.connections_count += 1
+        approved_connection.save()
+        if approved_connection.is_approved:
+            self.accept()
+        else:
+            self.disconnect(code=1014)
 
     def receive(self, text_data):
         """
@@ -134,11 +154,14 @@ class ChatConsumer(WebsocketConsumer):
         message_type = text_data_json['type']
 
         # fixme: uncomment this and remove line 14
-        raw_image = text_data_json['data']['img']
-        raw_image = base64.b64decode(raw_image)
-
-        cec_hdmi_status = text_data_json['data']['hdmi_status']
-        remote_last_image = ImageFile(io.BytesIO(raw_image), 'image.jpg')
+        raw_image = text_data_json['data'].get('img')
+        remote_last_image = None
+        if raw_image:
+            raw_image = base64.b64decode(raw_image)
+            remote_last_image = ImageFile(io.BytesIO(raw_image), 'image.jpg')
+            
+        cec_hdmi_status = text_data_json['data'].get('hdmi_status')
+        
         socket_status_updated = timezone.now()
         is_socket_connected = True
         

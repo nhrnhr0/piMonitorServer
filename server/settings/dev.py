@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.139.244.138','pi-monitor.boost-pop.com',]
+ALLOWED_HOSTS = ['127.0.0.1',]
 CSRF_TRUSTED_ORIGINS = ['https://pi-monitor.boost-pop.com',]
 
 

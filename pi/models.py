@@ -10,7 +10,11 @@ import os
 def image_path(instance, filename):
     return os.path.join('last_images', str(instance.id), 'image.jpg')
 
-
+class SocketDeviceIds(models.Model):
+    device_id = models.CharField(max_length=100, unique=True)
+    connections_count = models.IntegerField(default=0)
+    is_approved = models.BooleanField(default=False)
+    date_added = models.DateTimeField(default=timezone.now)
 class PiDevice(models.Model):
     device_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -19,8 +23,7 @@ class PiDevice(models.Model):
     # remote_last_image_url = models.CharField(max_length=100, blank=True, null=True)
     # I added blank True and null True
     remote_last_image = models.ImageField(upload_to=image_path, blank=True, null=True)  # , storage=OverwriteStorage())
-
-    remote_last_image_updated = models.DateTimeField(null=True)
+    
     # is_socket_connected = models.BooleanField(default=False)
     socket_status_updated = models.DateTimeField(null=True)
     cec_hdmi_status = models.CharField(max_length=100, default='unknown')
@@ -86,6 +89,18 @@ class PiDevice(models.Model):
             print(e)
             return False
 
+    def send_set_tv_url(self, url):
+        try:
+            if self.is_socket_connected_live():
+                channel_name = self.group_channel_name
+                from .consumers import send_set_tv_url_to_channel
+                send_set_tv_url_to_channel(channel_name,url)
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return False
 
 
 
